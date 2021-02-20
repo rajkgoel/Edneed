@@ -1,26 +1,43 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Domain from "./models/Domain";
+import { DomainTree } from './components/DomainTree';
+import { DomainEditor } from './components/DomainEditor';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface S{
+  domains: Domain[];
+  selectedDomain: string;
+}
+
+class App extends React.Component<{}, S> {
+  
+  constructor(props: any) {
+    super(props);
+    this.state = { domains: [], selectedDomain: "" };
+  }
+
+  componentDidMount() {
+    const apiUrl = 'http://localhost:8000/domain/all';
+    fetch(apiUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({ domains: [...data] });
+      });
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <DomainTree domains = {this.state.domains} selectedDomain={this.domainSelected} />
+        <br/>
+        <DomainEditor domainText={this.state.selectedDomain} />
+      </div>
+    );
+  }
+
+  domainSelected = (domain: string) => {
+    this.setState({ selectedDomain: domain });
+  }
 }
 
 export default App;
