@@ -14,18 +14,22 @@ interface P {
 export class DomainTree extends React.Component<P, {}> {
 
     render() {
+
+        let treeItems = [];
+        for(const [key, domain] of Object.entries(this.props.domains)) {
+            let treeItem = <TreeItem key={key} nodeId={key} 
+                label={domain.text} 
+                onLabelClick={this.domainClick}>
+                {domain.domains? 
+                    <DomainTree domains={domain.domains} selectedDomain={this.domainClick}/> : 
+                    <div></div>}
+            </TreeItem>;
+            treeItems.push(treeItem);
+        }
         return (
             <TreeView key="domainTree" defaultCollapseIcon={<ExpandMoreIcon />} 
-                defaultExpandIcon={<ChevronRightIcon />}
-            >
-                {this.props.domains.map((domain) => 
-                    <TreeItem key={domain.id} nodeId={domain.text.replace(" ", "")} label={domain.text} 
-                        onLabelClick={this.domainClick}>
-                        {domain.domains? 
-                            <DomainTree domains={domain.domains} selectedDomain={this.domainClick}/> : 
-                            <div></div>}
-                    </TreeItem>
-                )}
+                defaultExpandIcon={<ChevronRightIcon />}>
+                {treeItems}
             </TreeView>
             );
     }
